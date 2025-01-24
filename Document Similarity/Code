@@ -1,0 +1,425 @@
+#include <bits/stdc++.h>
+using namespace std;
+
+////////////////////////
+///functions for validating the choice
+int valid_number() {
+    int choice;
+    cin >> choice;
+    while (cin.fail()) {
+        cin.clear();
+        cin.ignore(1000, '\n');
+        cout << "Invalid choice, please enter a valid number: ";
+        cin >> choice;
+    }
+    return choice;
+}
+
+int valid_choice(int first, int last) {
+    cout << "Enter A Number Between " << first << " And " << last << ": " << endl;
+    cout << "Enter Your Choice: ";
+    int choice = valid_number();
+    if (choice < first || choice > last) {
+        choice = valid_choice(first, last);
+    }
+    return choice;
+}
+////////////////////////
+
+
+//////////////////////////////////
+///functions to take a file name and make sure that it does exist
+
+bool fileExists(const string& fileName) {
+    ifstream file(fileName);
+    const bool exists = file.is_open();
+    file.close();
+    return exists;
+}
+
+pair<bool, string> GetFileName() {
+    string filename;
+
+    cout << "Enter the name of the file that has the text with the extension: ";
+    cin.ignore();
+    getline(cin, filename);
+
+    if (fileExists(filename)) {
+        return {true, filename};
+    }
+
+    else {
+        cout << endl << "-----------------------------------------" << endl;
+        cout << "The file does not exisit on your device!\n" << endl;
+        cout << "[1]-Reenter the file name.\n";
+        cout << "[2]-Go back to main menu.\n";
+        int choice = valid_choice(1, 2);
+
+        if(choice == 1) {
+            return GetFileName();
+        }else {
+            return {false, ""};
+        }
+
+    }
+}
+
+/////////////////////////
+///function to take a string as an input from the user
+string GetString() {
+    cout << "Enter the string: ";
+    std::cin.ignore(std::numeric_limits<std::streamsize>::max(), '\n');
+
+    string text;
+    getline(cin, text);
+    return text;
+}
+//////////////////////////////////
+
+//////////////////////////////////
+///class Stringset and the (+, *) operators
+class StringSet {
+private:
+    vector<string> storingvec = {};
+
+    vector<string> get_file_contents(string fileName) {
+        vector<string> output;
+
+        ifstream file(fileName);
+        if (!file) {
+            cout << "Error opening file." << endl;
+            return output;
+        }
+
+        string line;
+        while (getline(file, line)) {
+            string word = "";
+            for (const char ch : line) {
+                if (isalpha(ch) || isdigit(ch)) {
+                    char c = tolower(ch);
+                    word += c;
+                }
+                else {
+                    output.push_back(word);
+                    word = "";
+                }
+            }
+
+        }
+        file.close();
+        return output;
+    }
+
+    vector<string> get_string_contents(string text) {
+        vector<string> output;
+        string word = "";
+
+        for(char i : text) {
+
+            if(isspace(i) && !word.empty()) {
+                output.push_back(word);
+                word = "";
+            }
+
+            else {
+                word += tolower(i);
+            }
+        }
+
+        if (!word.empty()) {
+            output.push_back(word);
+        }
+
+        return output;
+    }
+
+public:
+    StringSet(string file_name){
+        storingvec = get_file_contents(file_name);
+    }
+
+    StringSet(int n, string text){
+        storingvec = get_string_contents(text);
+    }
+
+    void append(string word) {
+        storingvec.push_back(word);
+    }
+
+    void remove_once(string word) {
+        for(int i = 0; i < storingvec.size(); i++) {
+            if (word == storingvec[i]) {
+                storingvec.erase(storingvec.begin() + i);
+                break;
+            }
+        }
+    }
+
+    void remove_from_vec(string word) {
+        storingvec.erase(
+            remove(storingvec.begin(), storingvec.end(), word),
+            storingvec.end());
+    }
+
+    void empty_vec() {
+        storingvec.clear();
+    }
+
+    int number_of_strings() {
+        return storingvec.size();
+    }
+
+    void display_vec() {
+        for(int i = 0; i < storingvec.size(); i++) {
+            cout << storingvec[i] << " ";
+        }
+        cout << endl;
+    }
+
+    friend string operator +(const StringSet &s1, const StringSet &s2);
+    friend vector<string> operator *(StringSet s1, StringSet s2);
+    friend float similarity(StringSet s1, StringSet s2);
+};
+
+string operator + (const StringSet &s1, const StringSet &s2) {
+    string output = "";
+
+    for (int i = 0; i < s1.storingvec.size(); i++) {
+        output += s1.storingvec[i];
+        output += " ";
+    }
+
+    for (int i = 0; i < s2.storingvec.size(); i++) {
+        output += s2.storingvec[i];
+        output += " ";
+    }
+
+    return output;
+}
+
+vector<string> operator *(StringSet s1, StringSet s2) {
+
+    vector<string> output;
+    for(int i = 0; i < s1.storingvec.size(); i++) {
+
+        for (int j = 0; j < s2.storingvec.size(); j++) {
+
+            if(s1.storingvec[i] == s2.storingvec[j]) {
+                output.push_back(s2.storingvec[j]);
+                break;
+            }
+
+        }
+    }
+
+    return output;
+}
+
+float similarity(StringSet s1, StringSet s2) {
+    int num_of_sim_words = (s1 * s2).size();
+    int size1 = s1.storingvec.size(), size2 = s2.storingvec.size();
+    float output = (num_of_sim_words)/ (sqrt(size1) * sqrt(size2));
+    return output;
+}
+//////////////////////////////////
+
+
+/////////////////////////////////
+///function to make an obiect of the class StringSet
+StringSet GetStringSetVariable() {
+    cout << endl << "-----------------------------------------" << endl;
+    cout << "Choose if you want to enter a string or to take a string from a file: " << endl;
+    cout << "[1]- Enter a filename.\n";
+    cout << "[2]- Enter a string.\n";
+    int choice = valid_choice(1, 2);
+
+    string input = "";
+    if (choice == 1) {
+        pair <bool, string> p = GetFileName();
+        if(p.first == true) {
+            input = p.second;
+        }
+        StringSet var1(input);
+        return var1;
+    }
+    else {
+        input = GetString();
+        StringSet var1(1, input);
+        return var1;
+    }
+
+}
+/////////////////////////////////
+
+
+///////////////////////////////////
+///menus
+void SubMenu1() {
+    cout << endl << "-----------------------------------------" << endl;
+    cout << "Please choose One Of The Next Options: " << endl;
+    cout << "[1]- Make operations on one StringSet." << endl;
+    cout << "[2]- Make operations on two StringSets." << endl;
+    cout << "[3]- Change the value of the first StringSet object." << endl;
+    cout << "[4]- Exit the program.\n";
+}
+
+bool SubMenu2(StringSet& var1) {
+    bool flag = true;
+    bool loop = true;
+
+    while(loop) {
+        cout << endl << "-----------------------------------------" << endl;
+        cout << "Please choose One Of The Next Options: " << endl;
+        cout << "[1]- Add a string." << endl;
+        cout << "[2]- Remove a word from the set." << endl;
+        cout << "[3]- Remove a word from all the set." << endl;
+        cout << "[4]- Clear the entire set," << endl;
+        cout << "[5]- Get the number of strings in the set," << endl;
+        cout << "[6]- Output all strings in the set." << endl;
+        cout << "[7]- Go back to the previous menu." << endl;
+        cout << "[8]- Exit the program." << endl;
+        int choice2 = valid_choice(1, 8);
+
+        string word_to_add, word_to_remove_once, word_to_remove;
+        switch (choice2) {
+            case 1:
+                word_to_add = GetString();
+                var1.append(word_to_add);
+                cout << "World is added.\n";
+                break;
+
+            case 2:
+                word_to_remove_once = GetString();
+                var1.remove_once(word_to_remove_once);
+                cout << "World is removed!\n";
+                break;
+
+            case 3:
+                word_to_remove = GetString();
+                var1.remove_from_vec(word_to_remove);
+                cout << "World is removed!\n";
+                break;
+
+            case 4:
+                var1.empty_vec();
+                cout << "The set is empty!\n";
+                break;
+
+            case 5:
+                cout << "Number of strings inside the set: " << var1.number_of_strings() << endl;
+                break;
+
+            case 6:
+                cout << "Set contains: ";
+                var1.display_vec();
+                break;
+
+            case 7:
+                loop = false;
+                break;
+
+            case 8:
+                loop = false;
+                flag = false;
+                break;
+        }
+    }
+    return flag;
+}
+
+bool SubMenu3(StringSet& var1) {
+
+    StringSet var2 = GetStringSetVariable();
+    if (var2.number_of_strings() == 0) {
+        return true;
+    }
+
+
+    int flag = true;
+    bool loop = true;
+    while(loop) {
+        cout << endl << "-----------------------------------------" << endl;
+        cout << "Please choose One Of The Next Options: " << endl;
+        cout << "[1]- Get the Union The two StringSet objects." << endl;
+        cout << "[2]- Get the intersection of the two StringSet objects." << endl;
+        cout << "[3]- Get The similarity between the two StringSet objects." << endl;
+        cout << "[4]- Go back to the previous menu." << endl;
+        cout << "[5]- Exit the program." << endl;
+
+        int choice3 = valid_choice(1, 5);
+        vector <string> temp;
+
+
+        switch (choice3) {
+            case 1:
+                cout << "The Union The two StringSet objects: " << endl <<(var1 + var2) << endl << endl;
+                break;
+
+            case 2:
+                temp = (var1 * var2);
+                cout << "The intersection of the two StringSet objects: " << endl;
+                cout << "---------------"<< endl;
+                for(string s : temp) {
+                    cout << s << endl;
+                }
+                cout << "--------------" << endl;
+                break;
+
+            case 3:
+                cout << "the similarity between the two objects:  " << similarity(var1, var2) << endl << endl;
+                break;
+
+            case 4:
+                loop = false;
+                break;
+
+            case 5:
+                loop = false;
+                flag = false;
+                break;
+        }
+    }
+    return flag;
+}
+
+void menu() {
+    bool flag = true;
+
+    cout << "Welcome to StringSet Class program" << endl;
+    StringSet var1 = GetStringSetVariable();
+
+
+    while (flag){
+
+        if(var1.number_of_strings() == 0) {
+            var1 = GetStringSetVariable();
+        }
+
+        else {
+            SubMenu1();
+            int choice1 = valid_choice(1,4);
+
+            if(choice1 == 1) {
+                flag = SubMenu2(var1);
+            }
+
+            else if(choice1 == 2) {
+                flag = SubMenu3(var1);
+            }
+
+            else if(choice1 == 3 || var1.number_of_strings() == 0) {
+                var1 = GetStringSetVariable();
+
+            }
+
+            else {
+                flag = false;
+            }
+        }
+    }
+}
+
+int main() {
+    menu();
+    return (0);
+}
