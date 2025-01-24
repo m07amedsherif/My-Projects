@@ -1,0 +1,306 @@
+def bin_to_dec(binary_number):  # this function will take the binary number from the use and convert it to decimal number
+    sum = 0
+    power = len(binary_number) - 1  # power will start from the index of the last digit-1 to 0
+    for i in range(0, len(binary_number)):
+        sum = sum + (int(binary_number[i]) * (2 ** power))
+        power = power - 1
+    return int(sum)
+
+
+def hex_to_dec(hex_number):  # this functiom will take the hex-number and convert it to decimal number
+    sum = 0
+    hexnum = 0
+    power = len(hex_number) - 1
+    for i in range(0, len(hex_number)):
+        if (hex_number[i] == 'A'):
+            hexnum = 10
+        elif (hex_number[i] == 'B'):
+            hexnum = 11
+        elif (hex_number[i] == 'C'):
+            hexnum = 12
+        elif (hex_number[i] == 'D'):
+            hexnum = 13
+        elif (hex_number[i] == 'E'):
+            hexnum = 14
+        elif (hex_number[i] == 'F'):
+            hexnum = 15
+        else:
+            hexnum = int(hex_number[i])
+        sum = sum + ((int(hexnum)) * (16 ** power))
+        power = power - 1
+    return int(sum)
+
+
+def oct_to_dec(oct_number):  # this function will take an octal number and convert it to decemail number
+    sum = 0
+    hexnum = 0
+    power = len(oct_number) - 1
+    for i in range(0, len(oct_number)):
+        sum = sum + (int(oct_number[i]) * (8 ** power))
+        power = power - 1
+    return int(sum)
+
+
+def dec_to_bin(dec_number):  # !!!!this fun() connvert an decimal number to bin
+    flag = True
+    number = int(dec_number)
+    binnum = ""
+    while (flag == True):
+        remin = int(number % 2)
+        binnum = str(remin) + binnum
+        number = number // 2
+        if (number == 0):
+            flag = False
+    return binnum
+
+
+def oct_to_bin(oct_number):  # this function will take an octal number and convert it to decimal number then convert it to binary number
+    flag = True
+    number = oct_to_dec(oct_number)
+    return (dec_to_bin(number))
+
+
+def hex_to_bin(hex_number):  # this function will take hex number and convert it to decimal number then conver it to binary number
+    flag = True
+    number = hex_to_dec(hex_number)
+    return (dec_to_bin(number))
+
+
+def dec_to_oct(dec_number):  # this function will take decimal number and convert it to an octal number
+    flag = True
+    number = int(dec_number)
+    octnum = ""
+    while (flag == True):
+        remin = int(number % 8)
+        octnum = str(remin) + octnum
+        number = number // 8
+        if (number == 0):
+            flag = False
+    return octnum
+
+
+def dec_to_hex(dec_number):  # this function will take decimal number and convert it to hex number
+    flag = True
+    hexnum = ""
+    number = int(dec_number)
+    while (flag == True):
+        remin = int(number % 16)
+        if (remin == 10):
+            hexnum = 'A' + hexnum
+        elif (remin == 11):
+            hexnum = 'B' + hexnum
+        elif (remin == 12):
+            hexnum = 'C' + hexnum
+        elif (remin == 13):
+            hexnum = 'D' + hexnum
+        elif (remin == 14):
+            hexnum = 'E' + hexnum
+        elif (remin == 15):
+            hexnum = 'F' + hexnum
+        else:
+            hexnum = str(remin) + hexnum
+        number = number // 16
+        if (number == 0): flag = False
+    return hexnum
+
+
+def hex_to_oct(hex_number):  # this function will take hex number and convert it to decimal number then convert it to an octal number
+    decnumber = hex_to_dec(hex_number)
+    octnum = dec_to_oct(decnumber)
+    return octnum
+
+
+def oct_to_hex(oct_number):  # this function will take an octal number and convert it to decimal number then convert it to hex number
+    decnumber = oct_to_dec(oct_number)
+    hexnum = dec_to_hex(decnumber)
+    return hexnum
+
+
+def bin_to_hex(bin_number):  # this function will take binary number and convert it to decimal number then convert it to hex number
+    decnum = bin_to_dec(bin_number)
+    hexnum = dec_to_hex(decnum)
+    return hexnum
+
+
+def bin_to_oct(bin_number):
+    decnum = bin_to_dec(bin_number)
+    octnum = dec_to_oct(decnum)
+    return octnum
+
+def checkbinNumber(number):
+    while True:
+        for digit in number:
+            if digit > '1' or digit < '0':
+                print("You Inserted Invalid Number, Please Try again")
+                return False
+        return True
+def checkhexnumber(number):
+    while True:
+        for digit in number:
+            if( digit not in "0123456789ABCDEF"):
+                return False
+        return True
+def checkdecimal(number):
+    while True:
+        for digit in number:
+            if( digit not in "0123456789"):
+                return False
+        return True
+def checkoctnumber(number):
+    while True:
+        for digit in number:
+            if digit not in "01234567":
+                print("You Inserted Invalid Number, Please Try again")
+                return False
+        return True
+
+# this 3 variables needed to take input and use it in if condition
+number = 0
+base = 0
+base2 = 0
+while (True):
+    print("** numbering system converter **", "A)insert a new number", "B)Exit program", sep='\n')
+    option = input()
+    if (option == 'A'):
+        flag2 = True
+        number = input("Please insert a number: ")
+        while (flag2==True):
+
+            print("** Please select the base you want to convert a number from**", "A)Decimal", "B)Binary", "C)Octal",
+                  "D)hexadecimal", sep='\n')
+            base_chracter = input()
+            if (base_chracter == 'A'):
+                if(checkdecimal(number)):
+                    base= 10
+                else:
+                    print("Invalid input")
+                    break
+            elif (base_chracter == 'B'):
+                if(checkbinNumber(number)):
+                    base=2
+                else:
+                    print("Invalid input")
+                    break
+            elif (base_chracter == 'C'):
+                if(checkoctnumber(number)):
+                    base = 8
+                else:
+                    print("Invalid input")
+                    break
+            elif (base_chracter == 'D'):
+                if(checkhexnumber(number)):
+                    base = 16
+                else:
+                    print("Invalid input")
+                    break
+            else:
+                print("please select a valid choice")
+                continue
+            if (base_chracter == 'A' or base_chracter == 'B' or base_chracter == 'C' or base_chracter == 'D'):
+                flag4 = True
+                while (flag4 == True):
+                    print("** Please select the base you want to convert a number to **", "A)Decimal", "B)Binary",
+                          "C)Octal", "D)hexadecimal", sep='\n')
+                    basechr2 = input()
+                    flag3 = True
+                    while (flag3==True):
+                        if (basechr2 == 'A'):
+                            base2 = 10
+                        elif (basechr2 == 'B'):
+                            base = 2
+                        elif (basechr2 == 'C' or basechr2=='c'):
+                            base = 8
+                        elif (basechr2 == 'D'):
+                            base2 = 16
+                        else:
+                            print("please select a valid choice")
+                            # flag4=False
+                            break;
+                        if (base == 10):
+                            if (base2 == 10):
+                                print(number)
+                                flag2 = False
+                                flag4 = False
+                                break;
+                            elif (base2 == 2):
+                                print(dec_to_bin(number))
+                                flag2 = False
+                                flag4 = False
+                                break;
+                            elif (base2 == 8):
+                                print(dec_to_oct(number))
+                                flag2 = False
+                                flag4 = False
+                                break;
+                            elif (base2 == 16):
+                                print(dec_to_hex(number))
+                                flag2 = False
+                                flag4 = False
+                                break;
+                        elif (base == 2):
+                            if (base2 == 2):
+                                print(number)
+                                flag2 = False
+                                flag4 = False
+                                break;
+                            elif (base2 == 10):
+                                print(bin_to_dec(number))
+                                flag2 = False
+                                flag4 = False
+                                break;
+                            elif (base2 == 8):
+                                print(bin_to_oct(number))
+                                flag2 = False
+                                flag4 = False
+                                break;
+                            elif (base2 == 16):
+                                print(bin_to_hex(number))
+                                flag2 = False
+                                flag4 = False
+                                break;
+                        elif (base == 8):
+                            if (base2 == 8):
+                                print(number)
+                                flag2 = False
+                                flag4 = False
+                                break;
+                            elif (base2 == 2):
+                                print(oct_to_bin(number))
+                                flag2 = False
+                                flag4 = False
+                                break;
+                            elif (base2 == 10):
+                                print(oct_to_dec(number))
+                                flag2 = False
+                                flag4 = False
+                                break;
+                            elif (base2 == 16):
+                                print(oct_to_hex(number))
+                                flag2 = False
+                                flag4 = False
+                                break;
+                        elif (base == 16):
+                            if (base2 == 16):
+                                print(number)
+                                flag2 = False
+                                flag4 = False
+                                break;
+                            elif (base2 == 2):
+                                print(hex_to_bin(number))
+                                flag2 = False
+                                flag4 = False
+                                break;
+                            elif (base2 == 8):
+                                print(hex_to_oct(number))
+                                flag2 = False
+                                flag4 = False
+                                break;
+                            elif (base2 == 10):
+                                print(hex_to_dec(number))
+                                flag2 = False
+                                flag4 = False
+                                break;
+    elif (option == 'B'):
+        break;
+    else:
+        print("please select a valid choice")
