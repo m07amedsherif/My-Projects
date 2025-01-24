@@ -1,0 +1,257 @@
+"""
+Program: a programme that give you the choice to use 6 different programmes
+which are :
+1- Program that takes the mark and prints the grade.
+2- Program to check whether a given number is an Armstrong number or not.
+3- Pi approximation
+4- Program that takes a message from the user and converts it to an encrypted version using Caesar cipher.
+5- Function that checks if two lists have the same elements, even if not in order.
+6- Program to find all the factors of a positive integer.
+"""
+
+def programme_number_1():
+    print("Hello to the program")
+
+    Again_1 = True
+
+    while Again_1:
+        while True:
+            try:
+                n = float(input("Please enter the grade: "))
+                break
+            except ValueError:
+                print("Please enter a valid number")
+        while (n > 100):
+            while True:
+                try:
+                    n = float(input("Please enter valid grade: "))
+                    break
+                except ValueError:
+                    print("Please enter a valid number")
+        # Classify the grade based on predefined ranges
+        if n >= 90:
+            print("You have got: A+")
+        elif n >= 85:
+            print("You have got: A")
+        elif n >= 80:
+            print("You have got: B+")
+        elif n >= 75:
+            print("You have got: B")
+        elif n >= 70:
+            print("You have got: C+")
+        elif n >= 65:
+            print("You have got: C")
+        elif n >= 60:
+            print("You have got: D+")
+        elif n >= 55:
+            print("You have got: D")
+        elif n >= 50:
+            print("You have got: E")
+        elif n < 50:
+            print("You have got: F")
+
+        while True:
+            try:
+                x = int(input(
+                    "If you want to enter another grade, choose 1. If not and you want to end the program, choose 2: "))
+                break
+            except ValueError:
+                print("Please choose 1 or 2")
+
+        while True:
+            try:
+                while x != 1 and x != 2:
+                    x = int(input("Please choose 1 or 2: "))
+                break
+            except ValueError:
+                print("Please choose 1 or 2")
+
+        if x == 2:
+            print("See you soon")
+            Again_1 = False
+        elif x == 1:
+            Again_1 = True
+
+
+def programme_number_6():
+    print("Hello to the program")
+
+    Again_6 = True
+
+    while Again_6:
+        while True:
+            try:
+                n = int(input("Please enter the number: "))
+                break
+            except ValueError:
+                print("Please enter a valid number")
+
+        print(f"The factors of {n} are: ")
+        print("{", end = " ")
+        for i in range(1, n):
+            if n % i == 0:
+                print(i, ",", end=" ")
+        print(n, end=" ")
+        print("}")
+
+        while True:
+            try:
+                x = int(input(
+                    "If you want to enter another number, choose 1. If not and you want to end the program, choose 2: "))
+                break
+            except ValueError:
+                print("Please choose 1 or 2")
+
+        while True:
+            try:
+                while x != 1 and x != 2:
+                    x = int(input("Please choose 1 or 2: "))
+                break
+            except ValueError:
+                print("Please choose 1 or 2")
+
+        if x == 2:
+            print("See you soon")
+            Again_6 = False
+        elif x == 1:
+            Again_6 = True
+
+
+
+def programme_Number_3():
+
+    x = int(input("Enter the number of iterations: "))
+    pi = 0
+    denominator = 1
+    for i in range(x):
+        if i % 2 == 0:
+            pi += 4 / denominator
+        else:
+            pi -= 4 / denominator
+        denominator += 2
+    print(pi)
+
+def programme_number_4():
+    original_text = str(input("Please enter your characters: "))
+    shifted_text = ""
+    for char in original_text:
+        if char.isalpha():
+            if char.islower():
+                base = ord('a')
+            else:
+                base = ord('A')
+            shifted_char = chr((ord(char) - base + 1) % 26 + base)
+            shifted_text += shifted_char
+        else:
+            shifted_text += char
+    print(shifted_text)
+
+
+def programme_Number_2():
+    def is_armstrong(number):
+        str_of_num = str(number)
+        num_of_digits = len(str_of_num)
+        sum_of_digits = 0
+        for digit in str_of_num:
+            sum_of_digits += int(digit) ** num_of_digits
+        if sum_of_digits == number:
+            return True
+        else:
+            return False
+
+    number = int(input("Enter your number: "))
+    if is_armstrong(number):
+        print(f"{number} is an Armstrong number.")
+    else:
+        print(f"{number} is not an Armstrong number.")
+
+
+def programme_Number_5():
+    def two_lists(list1, list2):
+        if len(list1) != len(list2):
+            return False
+
+        count_map = {}
+        for element in list1:
+            if element in count_map:
+                count_map[element] += 1
+            else:
+                count_map[element] = 1
+
+        for element in list2:
+            if element in count_map:
+                count_map[element] -= 1
+                if count_map[element] < 0:
+                    return False
+            else:
+                return False
+
+        for count in count_map.values():
+            if count != 0:
+                return False
+
+        return True
+
+
+    list1_str = input("Enter elements of list1 separated by spaces: ")
+    list2_str = input("Enter elements of list2 separated by spaces: ")
+    list1 = [int(x) for x in list1_str.split()]
+    list2 = [int(x) for x in list2_str.split()]
+    result = two_lists(list1, list2)
+    print(result)
+
+
+using_the_programme_again = True
+while using_the_programme_again:
+    print("Welcome to our programme")
+    print("You can choose between 6 different problems to apply.")
+    print("1- Program that takes the mark and prints the grade.")
+    print("2- Program to check whether a given number is an Armstrong number or not.")
+    print("3- Pi approximation")
+    print("4- Program that takes a message from the user and converts it to an encrypted version using Caesar cipher.")
+    print("5- Function that checks if two lists have the same elements, even if not in order.")
+    print("6- Program to find all the factors of a positive integer.")
+
+    while True:
+        try:
+            choice = int(input("Please choose which program you want to use (1-6): "))
+            break
+        except ValueError:
+            print("Please enter a valid choice (1-6)")
+
+    while choice < 1 or choice > 6:
+        choice = int(input("Please choose a valid program number (1-6): "))
+
+    # Execute the chosen program based on user input
+    if choice == 1:
+        programme_number_1()
+    elif choice == 2:
+        programme_Number_2()
+    elif choice == 3:
+        programme_Number_3()
+    elif choice == 4:
+        programme_number_4()
+    elif choice == 5:
+        programme_Number_5()
+    elif choice == 6:
+        programme_number_6()
+
+    while True:
+        try:
+            x = int(input(
+                "If you want to go back to the main menu choose 1. If not and you want to end the program, choose 2: "))
+            break
+        except ValueError:
+            print("Please choose 1 or 2")
+
+    while x != 1 and x != 2:
+        try:
+            x = int(input("Please choose 1 or 2: "))
+        except ValueError:
+            print("Please choose 1 or 2")
+
+    if x == 2:
+        print("See you soon")
+        using_the_programme_again = False
+    elif x == 1:
+        using_the_programme_again = True
