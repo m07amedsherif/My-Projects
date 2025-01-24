@@ -1,1 +1,298 @@
+#include <iostream>
+#include "NumericPlay.h"
+#include "pyramidplay.h"
+#include "4x4TTT.h"
+#include <cstdlib>
+#include "4x4Play.h"
+#include "UltimatePlay.h"
+#include "UltimateTTT.h"
+#include "WordTTT.h"
+#include "FourInRow.h"
+#include "5x5TTT.h"
+#include"MisereTTT.h"
 
+void playgame4() {
+    int choice;
+    Player<char>* players[2];
+    Board<char>* B = new Word_toe_board<char>();
+    string playerXName, player2Name;
+
+    cout << "Welcome to FCAI word_toe Game. :)\n";
+
+    // Set up player 1
+    cout << "Enter Player 1 name: ";
+    cin >> playerXName;
+
+    while (true) {
+        cout << "Choose Player 1 type:\n";
+        cout << "[1]-Human\n";
+        cout << "[2]-Random Computer\n";
+        cin >> choice;
+
+        if (cin.fail() || (choice != 1 && choice != 2)) {
+            cout << "Invalid input. Please enter 1 or 2.\n";
+            cin.clear(); // Clear the error flag
+            cin.ignore(100, '\n'); // Ignore invalid input
+
+        } else {
+            if (choice == 1) {
+                players[0] = new Word_toe_player<char>(playerXName, 'h');
+            } else {
+                players[0] = new Word_toe_Random_player<char>('a');
+            }
+            break;
+        }
+    }
+
+    // Set up player 2
+    cout << "Enter Player 2 name: ";
+    cin >> player2Name;
+
+    while (true) {
+        cout << "Choose Player 2 type:\n";
+        cout << "[1]-Human\n";
+        cout << "[2]-Random Computer\n";
+        cin >> choice;
+
+        if (cin.fail() || (choice != 1 && choice != 2)) {
+            cout << "Invalid input. Please enter 1 or 2.\n";
+            cin.clear(); // Clear the error flag
+            cin.ignore(100, '\n'); // Ignore invalid input
+
+        } else {
+            if (choice == 1) {
+                players[1] = new Word_toe_player<char>(player2Name, 'o');
+            } else {
+                players[1] = new Word_toe_Random_player<char>('o');
+            }
+            break;
+        }
+    }
+
+    // Create the game manager and run the game
+    GameManager<char> word_toe_game(B, players);
+    word_toe_game.run();
+
+    // Clean up
+    delete B;
+    for (int i = 0; i < 2; ++i) {
+        delete players[i];
+    }
+}
+
+void playgame2() {
+    int choice;
+    Player<char>* players[2];
+    Board<char>* B = new Four_in_row_board<char>();
+    string playerXName, player2Name;
+
+    cout << "Welcome to FCAI four_in_row Game. :)\n";
+
+    // Set up player 1
+    cout << "Enter Player 1 name: ";
+    cin >> playerXName;
+
+    while (true) {
+        cout << "Choose Player 1 type:\n";
+        cout << "[1]-Human\n";
+        cout << "[2]-Random Computer\n";
+        cin >> choice;
+
+        if (cin.fail() || (choice != 1 && choice != 2)) {
+            cin.clear(); // Clear the error flag
+            cin.ignore(100, '\n'); // Ignore invalid input
+            cout << "Invalid input. Please enter 1 or 2.\n";
+        } else {
+            if (choice == 1) {
+                players[0] = new Four_in_row_player<char>(playerXName, 'x');
+            } else {
+                players[0] = new Four_in_row_Rand_player<char>('x');
+            }
+            break;
+        }
+    }
+
+    // Set up player 2
+    cout << "Enter Player 2 name: ";
+    cin >> player2Name;
+
+    while (true) {
+        cout << "Choose Player 2 type:\n";
+        cout << "[1]-Human\n";
+        cout << "[2]-Random Computer\n";
+        cin >> choice;
+
+        if (cin.fail() || (choice != 1 && choice != 2)) {
+            cin.clear(); // Clear the error flag
+            cin.ignore(100, '\n'); // Ignore invalid input
+            cout << "Invalid input. Please enter 1 or 2.\n";
+        } else {
+            if (choice == 1) {
+                players[1] = new Four_in_row_player<char>(player2Name, 'o');
+            } else {
+                players[1] = new Four_in_row_Rand_player<char>('o');
+            }
+            break;
+        }
+    }
+
+    GameManager<char> four_in_row_game(B, players);
+    four_in_row_game.run();
+
+    // Clean up
+    delete B;
+    for (int i = 0; i < 2; ++i) {
+        delete players[i];
+    }
+}
+
+void game1() {
+    PlayPyramidGame<char>A1;
+    PyramidBoard<char> B;
+    bool flag = true;
+    while (flag) {
+        A1.startGame(B);
+        cout << endl << "[1] Play again.\n";
+        cout << "[2] Go to prev menu.\n";
+        int choice = validation::valid_choice(1, 2);
+        if(choice == 2) {
+            flag = false;
+        }
+    }
+}
+
+void game2() {
+    while (true) {
+        playgame2();
+        cout << endl << "[1] Play again.\n";
+        cout << "[2] Go to prev menu.\n";
+        int choice = validation::valid_choice(1, 2);
+        if(choice == 2) {
+            break;
+        }
+    }
+}
+
+void game3() {
+    while (true) {
+        _5x5TicTacToe();
+        cout << endl << "[1] Play again.\n";
+        cout << "[2] Go to prev menu.\n";
+        int choice = validation::valid_choice(1, 2);
+        if(choice == 2) {
+            break;
+        }
+    }
+}
+
+void game4() {
+    while (true) {
+        playgame4();
+        cout << endl << "[1] Play again.\n";
+        cout << "[2] Go to prev menu.\n";
+        int choice = validation::valid_choice(1, 2);
+        if(choice == 2) {
+            break;
+        }
+    }
+}
+
+void game5() {
+    PlayNumericGame<int>p;
+    NumericBoard<int> b;
+    while (true) {
+        p.startGame(b);
+        cout << endl << "[1] Play again.\n";
+        cout << "[2] Go to prev menu.\n";
+        int choice = validation::valid_choice(1, 2);
+        if(choice == 2) {
+            break;
+        }
+    }
+}
+
+void game6() {
+    while (true) {
+        _3x3MisereTicTacToe();
+        cout << endl << "[1] Play again.\n";
+        cout << "[2] Go to prev menu.\n";
+        int choice = validation::valid_choice(1, 2);
+        if(choice == 2) {
+            break;
+        }
+    }
+}
+
+void game7() {
+    Play4x4Game<char>a1;
+    FourBYFourTTTBoard<char> c1;
+    while (true) {
+        a1.startGame(c1);
+        cout << endl << "[1] Play again.\n";
+        cout << "[2] Go to prev menu.\n";
+        int choice = validation::valid_choice(1, 2);
+        if(choice == 2) {
+            break;
+        }
+    }
+}
+
+void game8() {
+    UltimateTTTBoard<char> A;
+    PlayUltimateGame<char>B;
+    while (true) {
+        B.startGame(A);
+        cout << endl << "[1] Play again.\n";
+        cout << "[2] Go to prev menu.\n";
+        int choice = validation::valid_choice(1, 2);
+        if(choice == 2) {
+            break;
+        }
+    }
+}
+
+void menu() {
+    bool flag = true;
+    cout << endl << "Welcome To the games apllication." << endl;
+    while (flag){
+        cout << "Please choose One Of The Next Options: " << endl;
+        cout << "[1]- Pyramid TIC-TAC-TOE." << endl;
+        cout << "[2]- Four in a row." << endl;
+        cout << "[3]- 5 x 5 TIC-TAC-TOE." << endl;
+        cout << "[4]- Word TIC-TAC-TOE." << endl;
+        cout << "[5]- Numeric TIC-TAC-TOE." << endl;
+        cout << "[6]- Misere TIC-TAC-TOE." << endl;
+        cout << "[7]- 4 x 4 TIC-TAC-TOE." << endl;
+        cout << "[8]- Ultimate TIC-TAC-TOE." << endl;
+        cout << "[9]- Quit the program" << endl << endl;
+        int choice = validation::valid_choice(1, 9);
+
+        system("cls");
+
+        if (choice == 1) {
+            game1();
+        }else if(choice == 2) {
+            game2();
+        }else if(choice == 3) {
+            game3();
+        }else if(choice == 4) {
+            game4();
+        }else if(choice == 5) {
+            game5();
+        }else if(choice == 6) {
+            game6();
+        }else if(choice == 7) {
+            game7();
+        }else if(choice == 8) {
+            game8();
+        }else if(choice == 9) {
+            flag = false;
+        }
+    }
+}
+
+int main()
+{
+    menu();
+    return 0;
+}
