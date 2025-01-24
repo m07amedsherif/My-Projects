@@ -1,0 +1,98 @@
+#square game
+#author:Mohamed sherif mohamed
+
+import random
+print("welcome to the square game")
+print("To play the game you have to use only positive square numbers")
+
+square_numbers = [x ** 2 for x in range(1, 101)]
+st_player = 0
+nd_player = 0
+continue_g = True
+
+random_or_no = 0
+coins = 0
+while continue_g:
+    while True:
+        try:
+            random_or_no = int(input(
+                "if you want to choose a number to play on choose 1 if you want a random number between 10 and 500 choose 2 : "))
+            break
+        except ValueError:
+            print("please enter a number not a text ")
+    while random_or_no != 1 and random_or_no != 2:
+        try:
+            random_or_no = int(input("please choose 1 or 2 : "))
+        except ValueError:
+            print("please enter a number not a text ")
+    if random_or_no == 1:
+        # the goal is the number that the players are tring to finish first
+        while True:
+            try:
+                coins = int(input("Please enter the goal : "))
+                while coins in square_numbers:
+                    coins = int(input("please choose a number that is not squared : "))
+                break
+            except ValueError:
+                print("please enter a number not a text : ")
+
+    if random_or_no == 2:
+        coins = random.randint(10, 500)
+        if coins in square_numbers:
+            coins = coins + 1
+        print(f"your goal is {coins}")
+    while coins > 0:
+        while True:
+            try:
+                st_player = int(input("first player turn : "))
+                break
+            except ValueError:
+                print("please enter a number not a text ")
+        while st_player not in square_numbers or st_player > coins or st_player < 0:
+            try:
+                st_player = int(input(
+                    f"please enter a positive square number wich is smaller than or equal {coins} and bigger than 0 : "))
+                break
+            except ValueError:
+                print("please enter a number not a text ")
+        coins -= st_player
+        if coins == 0:
+            print("the winner is the first player")
+            break
+        else:
+            print(coins)
+        while True:
+            try:
+                nd_player = int(input("second player turn : "))
+                break
+            except ValueError:
+                print("please enter a number not a text ")
+        while nd_player not in square_numbers or nd_player > coins or nd_player < 0:
+            try:
+                nd_player = int(input(
+                    f"please enter a positive square number wich is smaller than or equal {coins} and bigger than 0 : "))
+                break
+            except ValueError:
+                print("please enter a number not a text ")
+        coins -= nd_player
+        if coins == 0:
+            print("the winner is the second player")
+            break
+        else:
+            print(coins)
+    while True:
+        try:
+            x = int(input("If you want to play again choose 1 if not choose 2 : "))
+            break
+        except ValueError:
+            print("please enter a number not a text ")
+    while x != 1 and x != 2:
+        try:
+            x = int(input("please choose 1 or 2 : "))
+            break
+        except ValueError:
+            print("please enter a number not a text ")
+    if x == 2:
+        print("ok , see you soon")
+        continue_g = False
+        break
