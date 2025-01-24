@@ -1,0 +1,414 @@
+// Program that simulate the system of library
+// Note the password is: alex123
+
+#include <iostream>
+#include <vector>
+#include <string>
+using namespace std;
+
+int num_of_books = 0;
+string password = "alex123";
+
+int valid_number();
+int valid_choice(int first, int last);
+bool exists_title(const string& title);
+string reenter_title();
+string enter_title();
+string enter_author();
+bool exists_id(const string& id);
+string reenter_id();
+bool valid_id(const string& id);
+string enter_id();
+void reenter_password();
+void enter_password();
+void requires_authority();
+void menu();
+int search_using_title(const string& title);
+void add_book();
+void remove_book();
+void update_book();
+void borrow_book();
+void return_book();
+void display_books();
+
+class Book {
+private:
+    string id, title, author;
+    string summary = "There Is No Summary About This Book";
+    bool borrowed = false;
+
+public:
+    Book(string id, string title, string author)
+    : id(id), title(title), author(author) {}
+
+    void set_id(const string& id) {
+        this->id = id;
+    }
+
+    string get_id() const {
+        return id;
+    }
+
+    void set_title(const string& title) {
+        this->title = title;
+    }
+
+    string get_title() const {
+        return title;
+    }
+
+    void set_author(const string& author) {
+        this->author = author;
+    }
+
+    string get_author() const {
+        return author;
+    }
+
+    void set_summary(const string& summary) {
+        this->summary = summary;
+    }
+
+    string get_summary() const {
+        return summary;
+    }
+
+    void set_borrowed(bool borrowed) {
+        this->borrowed = borrowed;
+    }
+
+    bool get_borrowed() const {
+        return borrowed;
+    }
+
+    void display_info() const {
+        cout << "Book ID: " << id << endl;
+        cout << "Book Title: " << title << endl;
+        cout << "Author Name: " << author << endl;
+        cout << "Summary About The Book: " << endl << summary << endl;
+    }
+};
+
+vector<Book> library;
+
+int valid_number() {
+    int choice;
+    cin >> choice;
+    while (cin.fail()) {
+        cin.clear();
+        cin.ignore(1000, '\n');
+        cout << "Invalid choice, please enter a valid number: ";
+        cin >> choice;
+    }
+    return choice;
+}
+
+int valid_choice(int first, int last) {
+    cout << "Enter A Number Between " << first << " And " << last << ": " << endl;
+    cout << "Enter Your Choice: ";
+    int choice = valid_number();
+    if (choice < first || choice > last) {
+        choice = valid_choice(first, last);
+    }
+    return choice;
+}
+
+bool exists_title(const string& title) {
+    for (const auto& book : library) {
+        if (book.get_title() == title) {
+            return true;
+        }
+    }
+    return false;
+}
+
+string reenter_title() {
+    cout << "[1]- Reenter the Title Of The Book" << endl << "[2]- Go Back To The Main Menu" << endl;
+    int choice = valid_choice(1, 2);
+    if (choice == 1) {
+        return enter_title();
+    } else {
+        menu();
+        return ""; // Adding return statement to avoid warnings
+    }
+}
+
+string enter_title() {
+    string title;
+    cout << "Enter The Title Of The Book: ";
+    cin.ignore();
+    getline(cin, title);
+    return title;
+}
+
+string enter_author() {
+    string author;
+    cout << "Enter The Name Of The Author Of The Book: ";
+    cin.ignore();
+    getline(cin, author);
+    return author;
+}
+
+bool exists_id(const string& id) {
+    for (const auto& book : library) {
+        if (book.get_id() == id) {
+            return true;
+        }
+    }
+    return false;
+}
+
+string reenter_id() {
+    cout << "[1]- Reenter the ID Of The Book" << endl << "[2]- Go Back To The Main Menu" << endl;
+    int choice = valid_choice(1, 2);
+    if (choice == 1) {
+        return enter_id();
+    } else {
+        menu();
+        return ""; // Adding return statement to avoid warnings
+    }
+}
+
+bool valid_id(const string& id) {
+    for (char c : id) {
+        if (!isdigit(c)) {
+            cout << "Invalid ID" << endl;
+            return false;
+        }
+    }
+    return true;
+}
+
+string enter_id() {
+    string id;
+    cout << "The Book ID Only Consists Of Numbers" << endl;
+    cout << "Enter The Book's ID: ";
+    cin >> id;
+    while (!valid_id(id)) {
+        id = reenter_id();
+        cout << "Please, Enter Valid ID That Only Consists Of Numbers: ";
+        cin >> id;
+    }
+    return id;
+}
+
+void reenter_password() {
+    cout << "Wrong Password" << endl << "Do you want to try again ?" << "[1]- Yes" << endl << "[2]- No, Go Back To The Main Menu" << endl;
+    int choice = valid_choice(1, 2);
+    if (choice == 1) {
+        enter_password();
+    } else {
+        cout << "OK, going Back To The Main Menu" << endl;
+        menu();
+    }
+}
+
+void enter_password() {
+    string check;
+    cout << "Enter password: ";
+    cin >> check;
+    if (check != password) {
+        reenter_password();
+    }
+}
+
+void requires_authority() {
+    cout << "This Option Requires Authority" << endl;
+    cout << "[1]- Continue To Enter The Password" << endl;
+    cout << "[2]- Go Back To The Main Menu" << endl;
+    int choice = valid_choice(1, 2);
+    if (choice == 1) {
+        enter_password();
+    } else {
+        menu();
+    }
+}
+
+void menu() {
+    while (true){
+    cout << endl << endl << endl << "Welcome To Alex Library" << endl;
+    cout << "Please choose One Of The Next Options: " << endl;
+    cout << "[1]- Add A Book" << endl;
+    cout << "[2]- Remove A Book" << endl;
+    cout << "[3]- Update A Book" << endl;
+    cout << "[4]- Borrow A Book" << endl;
+    cout << "[5]- Return A Book" << endl;
+    cout << "[6]- Display Books" << endl;
+    cout << "[7]- Quit the program" << endl << endl;
+    cout << "Please, Notice That Adding, Removing, and Updating Requires Authority" << endl;
+    int choice = valid_choice(1, 7);
+
+    switch (choice) {
+    case 1:
+        requires_authority();
+        add_book();
+        break;
+    case 2:
+        requires_authority();
+        remove_book();
+        break;
+    case 3:
+        requires_authority();
+        update_book();
+        break;
+    case 4:
+        borrow_book();
+        break;
+    case 5:
+        return_book();
+        break;
+    case 6:
+        display_books();
+        break;
+    case 7:
+        break;
+    }
+    }
+}
+
+void add_book() {
+    cout << "Sure want to add book?\n" << "[1]- Yes\n" << "[2]- No, go back to main menu\n";
+    int choice = valid_choice(1, 2);
+    if (choice == 2) {
+        menu();
+        return;
+    }
+    string id = enter_id();
+    while (exists_id(id)) {
+        cout << "This ID Is Already Used" << endl;
+        id = reenter_id();
+    }
+    string title = enter_title();
+    while (exists_title(title)) {
+        cout << "This Title Is Already Used" << endl;
+        title = reenter_title();
+    }
+    string author = enter_author();
+    Book new_b(id, title, author);
+    cout << "Do You Want To Add A Summary?" << endl << "[1]- Yes\n" << "[2]- No\n";
+    choice = valid_choice(1, 2);
+    if (choice == 1) {
+        string summary;
+        cout << "Write Down The Summary: ";
+        getline(cin.ignore(), summary);
+        new_b.set_summary(summary);
+        cout << "Summary Is Added\n";
+    } else {
+        cout << "OK, Going Back To The Main Menu" << endl;
+    }
+    library.push_back(new_b);
+    num_of_books++;
+}
+
+void remove_book() {
+    cout << "Sure want to remove a book?\n" << "[1]- Yes\n" << "[2]- No, go back to main menu\n";
+    int choice = valid_choice(1, 2);
+    if (choice == 2) {
+        menu();
+        return;
+    }
+    cout << "Enter the ID of the book to remove: ";
+    string id = enter_id();
+    for (auto it = library.begin(); it != library.end(); ++it) {
+        if (it->get_id() == id) {
+            library.erase(it);
+            num_of_books--;
+            cout << "Book removed successfully." << endl;
+            return;
+        }
+    }
+    cout << "Book not found." << endl;
+}
+
+void update_book() {
+    cout << "Sure want to update a book?\n" << "[1]- Yes\n" << "[2]- No, go back to main menu\n";
+    int choice = valid_choice(1, 2);
+    if (choice == 2) {
+        menu();
+        return;
+    }
+    cout << "Enter the ID of the book to update: ";
+    string id = enter_id();
+    for (auto& book : library) {
+        if (book.get_id() == id) {
+            cout << "Enter new title (or leave blank to keep current): ";
+            string title;
+            getline(cin.ignore(), title);
+            if (!title.empty()) {
+                book.set_title(title);
+            }
+            cout << "Enter new author (or leave blank to keep current): ";
+            string author;
+            getline(cin, author);
+            if (!author.empty()) {
+                book.set_author(author);
+            }
+            cout << "Book updated successfully." << endl;
+            return;
+        }
+    }
+    cout << "Book not found." << endl;
+    menu();
+}
+
+void borrow_book() {
+    cout << "Sure want to borrow a book?\n" << "[1]- Yes\n" << "[2]- No, go back to main menu\n";
+    int choice = valid_choice(1, 2);
+    if (choice == 2) {
+        menu();
+        return;
+    }
+    cout << "Enter the ID of the book to borrow: ";
+    string id = enter_id();
+    for (auto& book : library) {
+        if (book.get_id() == id) {
+            if (book.get_borrowed()) {
+                cout << "Book is already borrowed." << endl;
+            } else {
+                book.set_borrowed(true);
+                cout << "Book borrowed successfully." << endl;
+            }
+            return;
+        }
+    }
+    cout << "Book not found." << endl;
+}
+
+void return_book() {
+    cout << "Sure want to return a book?\n" << "[1]- Yes\n" << "[2]- No, go back to main menu\n";
+    int choice = valid_choice(1, 2);
+    if (choice == 2) {
+        menu();
+        return;
+    }
+    cout << "Enter the ID of the book to return: ";
+    string id = enter_id();
+    for (auto& book : library) {
+        if (book.get_id() == id) {
+            if (!book.get_borrowed()) {
+                cout << "Book was not borrowed." << endl;
+            } else {
+                book.set_borrowed(false);
+                cout << "Book returned successfully." << endl;
+            }
+            return;
+        }
+    }
+    cout << "Book not found." << endl;
+}
+
+void display_books() {
+    if (library.empty()) {
+        cout << "No books in the library." << endl;
+        return;
+    }
+    for (const auto& book : library) {
+        book.display_info();
+        cout << endl;
+    }
+}
+
+int main(){
+    menu();
+    return 0;
+}
