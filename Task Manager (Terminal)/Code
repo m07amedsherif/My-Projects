@@ -1,0 +1,148 @@
+#include <bits/stdc++.h>
+#include <cstdio>
+#include <fstream>
+
+using namespace std;
+
+int valid_number() {
+    int choice;
+    cin >> choice;
+    while (cin.fail()) {
+        cin.clear();
+        cin.ignore(1000, '\n');
+        cout << "Invalid choice, please enter a valid number: ";
+        cin >> choice;
+    }
+    return choice;
+}
+
+int valid_choice(int first, int last) {
+    cout << "Enter A Number Between " << first << " And " << last << ": " << endl;
+    cout << "Enter Your Choice: ";
+    int choice = valid_number();
+    if (choice < first || choice > last) {
+        choice = valid_choice(first, last);
+    }
+    return choice;
+}
+
+
+class Process {
+private:
+    string Name, pid, sessionName, sessionNum, memoryUsage;
+
+public:
+    Process(string name, string pid, string sessionName, string sessionNum, string memoryUsage)
+        : Name(name), pid(pid), sessionName(sessionName), sessionNum(sessionNum), memoryUsage(memoryUsage) {}
+
+    string getName() const { return Name; }
+    string getPID() const { return pid; }
+    string getSessionNum() const { return sessionNum; }
+    string getSessionName() const { return sessionName; }
+    string getMemoryUsage() const { return memoryUsage; }
+
+    void display() const {
+        cout << setw(35) << Name << setw(10) << pid << setw(15) << sessionName
+             << setw(15) << sessionNum << setw(10) << memoryUsage << " KB" << endl;
+    }
+};
+
+class ProcessManager {
+private:
+    vector<Process> processes;
+    string filename = "Tempfile.txt";
+
+public:
+    ProcessManager() {
+        ofstream file(filename);
+        if (!file.is_open()) {
+            cout << "Error creating the file.\n";
+        }
+    }
+
+    ~ProcessManager() {
+            remove(filename.c_str());
+    }
+
+    void LoadProcess() {
+        processes.clear();
+        system(("tasklist /FO CSV > " + filename).c_str());
+
+        ifstream file(filename);
+        string line;
+        bool skipHeader = true;
+
+        while (getline(file, line)) {
+            if (skipHeader) {
+                skipHeader = false;
+                continue;
+            }
+
+            stringstream ss(line);
+            string name, pid, sessionName, sessionNum, memUsage;
+
+            // Read and parse each field (CSV format)
+            getline(ss, name, ',');
+            getline(ss, pid, ',');
+            getline(ss, sessionName, ',');
+            getline(ss, sessionNum, ',');
+            getline(ss, memUsage, 'K');
+
+
+            name = name.substr(1, name.size() - 2);
+            pid = pid.substr(1, pid.size() - 2);
+            sessionName = sessionName.substr(1, sessionName.size() - 2);
+            sessionNum = sessionNum.substr(1, sessionNum.size() - 2);
+            memUsage = memUsage.substr(1, memUsage.size() - 2);
+
+            Process p(name, pid, sessionName, sessionNum, memUsage);
+            processes.push_back(p);
+        }
+    }
+
+    void DisplayProcesses() const {
+        if (processes.empty()) {
+            cout << "No processes to display." << endl;
+            return;
+        }
+
+        // Display table header
+        cout << left << setw(35) << "Name" << setw(10) << "PID" << setw(15) << "Session Name"
+             << setw(15) << "Session Num" << setw(10) << "Memory Usage" << endl;
+        cout << string(90, '-') << endl;
+
+        // Display each process
+        for (const auto& process : processes) {
+            process.display();
+        }
+    }
+};
+
+void RunTaskmanager() {
+    ProcessManager p;
+    p.LoadProcess();
+    p.DisplayProcesses();
+}
+
+void menu() {
+    while(true) {
+        cout << "--------------------------------------------------------------------------------------------\n";
+        cout << "welcome to the task manager.\n";
+        cout << "[1]- Run the task manager.\n";
+        cout << "[2]- Exit.\n";
+        int choice = valid_choice(1,2);
+        cout << "--------------------------------------------------------------------------------------------\n";
+
+        if(choice == 1) {
+            RunTaskmanager();
+        }else {
+            break;
+        }
+    }
+}
+
+
+int main() {
+    menu();
+    return 0;
+}
