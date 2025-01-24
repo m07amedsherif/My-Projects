@@ -1,0 +1,719 @@
+/*
+    Porpose: A program that allows the user to perform encryption and decryption operations in three different ways and gives
+    him the choice to use which he would like to apply : affine cipher, Baconian cipher, morse code ciper
+
+ 	Author: emil ehab mosaad, mohamed sherif mohamed ,mohamed mahmoud abdelbaset
+*/
+
+#include <iostream>
+#include <string>
+#include <cctype>
+#include <map>
+using namespace std;
+
+
+// Forward declarations of functions
+void MainMenu();
+void SubMenu1();
+void SubMenu2();
+void SubMenu3();
+void GetBack1();
+void GetBack2();
+void GetBack3();
+string AffineCipher(int, int, int, string);
+string AffineDecipher(int, int, int, string);
+string BaconianCipher(string);
+void BaconianDecipher(string);
+string MorseCodeCipher(string);
+string MorseCodeDecipher(string);
+string ReadTextFromUser1(string);
+string ReadTextFromUser2(string);
+int ReadTextFromUser3(string);
+bool isDigit(string);
+void VerifyTheEquation(int&, int&, int&);
+
+
+
+int main()
+{
+    MainMenu();
+    return 0;
+}
+
+
+
+
+
+
+// Collaboration amoung team members
+//{
+    // Function to verify if the equation (a * c) % 26 == 1
+    void VerifyTheEquation(int& a, int& b, int& c)
+    {
+        // Loop until the equation is satisfied
+        while ((a * c) % 26 != 1)
+        {
+            // Prompt the user to enter numbers that verify the equation
+            cout << "Please enter numbers that verify the equation" << endl;
+
+            // Input for A again
+            a = ReadTextFromUser3("A = ");
+
+            // Input for B again
+            b = ReadTextFromUser3("B = ");
+
+            // Input for C again
+            c = ReadTextFromUser3("C = ");
+        }
+    }
+
+    // Function to check if a string contains only digits
+    bool isDigit(string num)
+    {
+        bool check = true;
+        // Iterate through each character in the string
+        for (const char& c : num)
+        {
+            // If the character is not a digit, set check to false and exit the loop
+            if (!isdigit(c))
+            {
+                check = false;
+                break;
+            }
+        }
+        return check;
+    }
+
+    // Function to read text input from the user
+    string ReadTextFromUser1(string massege = "")
+    {
+        string Input;
+        cout << massege;
+        getline(cin, Input);
+
+        // Convert input text to uppercase for consistency
+        for (int i = 0; i < Input.size(); ++i)
+        {
+            Input[i] = toupper(Input[i]);
+        }
+        return Input;
+    }
+
+    // Function to read text input from the user and validate it to contain only alphabetic characters and spaces
+    string ReadTextFromUser2(string message)
+    {
+        string Input, ValidatedInput;
+        cout << message;
+        getline(cin, Input); // Read a line of text from the user
+
+        // Iterate through each character in the input string
+        for (int i = 0; i < Input.size(); ++i)
+        {
+            // If the character is alphabetic, add it to the validated input
+            if (isalpha(Input[i]))
+            {
+                ValidatedInput += Input[i];
+            }
+            // If the character is a space, add it to the validated input
+            else if (Input[i] == ' ')
+            {
+                ValidatedInput += ' ';
+            }
+        }
+
+        return ValidatedInput;
+    }
+
+    // Function to read integer input from the user
+    int ReadTextFromUser3(string message)
+    {
+        string input;
+        cout << message;
+        cin >> input;
+
+        // Validate input until a valid integer is entered
+        while (!isDigit(input))
+        {
+            cout << message;
+            cin >> input;
+        }
+
+        cin.ignore(); // Clear input buffer
+        return stoi(input); // Convert string input to integer
+    }
+
+    // Function to navigate back to submenu 3 or exit the program
+    void GetBack3()
+    {
+        cout << "\n\n-----------------------------------------\n";
+        cout << "[1] Back to previous menu" << endl;
+        cout << "[2] Exit" << endl;
+        cout << "-----------------------------------------\n";
+
+        int choice;
+
+        while (true)
+        {
+            // Prompt the user to enter their choice
+            choice = ReadTextFromUser3("Please Enter Your Choice: ");
+
+            if (choice == 1)
+            {
+                // Navigate back to submenu 3
+                SubMenu3();
+                break;
+            }
+            else if (choice == 2)
+            {
+                // Exit the program
+                break;
+            }
+            else
+            {
+                cout << "Invalid input" << endl; // Display error message for invalid input
+            }
+        }
+    }
+
+    // Function to navigate back to submenu 2 or exit the program
+    void GetBack2()
+    {
+        cout << "\n\n-----------------------------------------\n";
+        cout << "[1] Back to previous menu" << endl;
+        cout << "[2] Exit" << endl;
+        cout << "-----------------------------------------\n";
+
+        int choice;
+
+        // Continue looping until a valid choice is made
+        while (true)
+        {
+            choice = ReadTextFromUser3("Please Enter Your Choice: ");
+
+            if (choice == 1)
+            {
+                SubMenu2(); // Return to submenu 2
+                break;
+            }
+            else if (choice == 2)
+            {
+                break; // Exit the program
+            }
+            else
+            {
+                cout << "Invalid input" << endl; // Display error message for invalid input
+            }
+        }
+    }
+
+    // Function to navigate back to submenu 1 or exit the program
+    void GetBack1()
+    {
+        cout << "\n\n-----------------------------------------\n";
+        cout << "[1] Back to previous menu" << endl;
+        cout << "[2] Exit" << endl;
+        cout << "-----------------------------------------\n";
+
+        int choice;
+
+        // Continue looping until a valid choice is made
+        while (true)
+        {
+            choice = ReadTextFromUser3("Please Enter Your Choice: ");
+
+            if (choice == 1)
+            {
+                SubMenu1(); // Return to submenu 1
+                break;
+            }
+            else if (choice == 2)
+            {
+                break; // Exit the program
+            }
+            else
+            {
+                cout << "Invalid input" << endl; // Display error message for invalid input
+            }
+        }
+    }
+
+    // Affine Cipher Menu
+    void SubMenu1()
+    {
+        int choice;
+
+        cout << "\n-----------------------------------------\n";
+        cout << "[1] Encryption" << endl;
+        cout << "[2] Decryption" << endl;
+        cout << "[3] Back to Main Menu" << endl;
+        cout << "-----------------------------------------\n";
+
+        while (true)
+        {
+            choice = ReadTextFromUser3("Please Enter Your Choice: "); // Get user's choice
+
+            if (choice == 1)
+            {
+
+                int a = ReadTextFromUser3("A = "); // Get input for 'A'
+                int b = ReadTextFromUser3("B = "); // Get input for 'B'
+                int c = ReadTextFromUser3("C = "); // Get input for 'C'
+
+                VerifyTheEquation(a, b, c); // Verify the equation
+
+                string text = ReadTextFromUser2("Please enter the text to encrypt: "); // Get input text
+
+                cout << "The Encrypted Text is: " << AffineCipher(a, b, c, text) << endl; // Encrypt text
+
+                GetBack1(); // Go back to previous menu
+
+                break;
+            }
+            else if (choice == 2)
+            {
+                int a = ReadTextFromUser3("A = "); // Get input for 'A'
+                int b = ReadTextFromUser3("B = "); // Get input for 'B'
+                int c = ReadTextFromUser3("C = "); // Get input for 'C'
+
+                VerifyTheEquation(a, b, c); // Verify the equation
+
+                string text = ReadTextFromUser2("Please enter the text to decrypt: "); // Get input text
+
+                cout << "The Decrypted Text is: " << AffineDecipher(a, b, c, text) << endl; // Decrypt text
+
+                GetBack1(); // Go back to previous menu
+
+                break;
+            }
+            else if (choice == 3)
+            {
+                MainMenu(); // Go back to main menu
+                break;
+            }
+            else
+            {
+                cout << "Invalid Choice" << endl; // Display error message for invalid choice
+            }
+        }
+    }
+
+    // Bacoian Ciper Menu
+    void SubMenu2()
+    {
+        int choice;
+
+        cout << "\n-----------------------------------------\n";
+        cout << "[1] Encryption" << endl;
+        cout << "[2] Decryption" << endl;
+        cout << "[3] Back to Main Menu" << endl;
+        cout << "-----------------------------------------\n";
+
+        while (true)
+        {
+            choice = ReadTextFromUser3("Please Enter Your Choice: "); // Get user's choice
+
+            if (choice == 1)
+            {
+                cout << "The Encrypted Text is: " << BaconianCipher(ReadTextFromUser1("Please enter the text to encrypt: ")) << endl; // Encrypt text using Baconian Cipher
+
+                GetBack2(); // Go back to previous menu
+
+                break;
+            }
+            else if (choice == 2)
+            {
+
+
+                string text = ReadTextFromUser1("Please enter the text to decrypt: ");
+
+                BaconianDecipher(text); // Decrypt text using Baconian Cipher
+
+                GetBack2(); // Go back to previous menu
+
+                break;
+            }
+            else if (choice == 3)
+            {
+                MainMenu(); // Go back to main menu
+                break;
+            }
+            else
+            {
+                cout << "Invalid Choice" << endl; // Display error message for invalid choice
+            }
+        }
+    }
+
+    // Morse Code Menu
+    void SubMenu3()
+    {
+        int choice;
+
+        cout << "\n-----------------------------------------\n";
+        cout << "[1] Encryption" << endl;
+        cout << "[2] Decryption" << endl;
+        cout << "[3] Back to Main Menu" << endl;
+        cout << "-----------------------------------------\n";
+
+        while (true)
+        {
+            choice = ReadTextFromUser3("Please Enter Your Choice: "); // Get user's choice
+
+            if (choice == 1)
+            {
+                cout << "The Encrypted Text is: " << MorseCodeCipher(ReadTextFromUser1("Please enter the text to encrypt: ")) << endl; // Encrypt text using Morse Code
+
+                GetBack3(); // Go back to previous menu
+
+                break;
+            }
+            else if (choice == 2)
+            {
+
+                string text = ReadTextFromUser1("Please enter the text to decrypt (. / -): ");
+
+                bool check = true;
+
+                for (const char& c : text)
+                {
+                    if (c != '.' && c != '-' && c != ' ')
+                    {
+                        check = false;
+                        break; // Once a non-dot or non-dash character is found, no need to continue checking
+                    }
+                }
+
+                while (!check)
+                {
+                    text = ReadTextFromUser1("Please enter the text to decrypt (. / -): ");
+
+                    check = true; // Reset check to true for the new input
+
+                    for (const char& c : text)
+                    {
+                        if (c != '.' && c != '-' && c != ' ')
+                        {
+                            check = false;
+                            break; // Once a non-dot or non-dash character is found, no need to continue checking
+                        }
+                    }
+                }
+
+                cout << "The Decrypted Text is: " << MorseCodeDecipher(text) << endl; // Decrypt text using Morse Code
+
+                GetBack3(); // Go back to previous menu
+
+                break;
+            }
+            else if (choice == 3)
+            {
+                MainMenu(); // Go back to main menu
+                break;
+            }
+            else
+            {
+                cout << "Invalid Choice" << endl; // Display error message for invalid choice
+            }
+        }
+    }
+
+    // Main Menu
+    void MainMenu()
+    {
+        int choice;
+
+        cout << "Welcome to the Encryption and Decryption program!" << endl;
+        cout << "\n-----------------------------------------\n";
+        cout << "[1] Affine Cipher" << endl;
+        cout << "[2] Baconian Cipher" << endl;
+        cout << "[3] Morse Code Cipher" << endl;
+        cout << "[4] Exit" << endl;
+        cout << "-----------------------------------------\n";
+
+        while (true)
+        {
+            choice = ReadTextFromUser3("Please Enter Your Choice: "); // Get user's choice
+
+            if (choice == 1)
+            {
+                SubMenu1(); // Go to Affine Cipher submenu
+                break;
+            }
+            else if (choice == 2)
+            {
+                SubMenu2(); // Go to Baconian Cipher submenu
+                break;
+            }
+            else if (choice == 3)
+            {
+                SubMenu3(); // Go to Morse Code Cipher submenu
+                break;
+            }
+            else if (choice == 4)
+            {
+                break; // Exit the program
+            }
+            else
+            {
+                cout << "Invalid Choice" << endl; // Display error message for invalid choice
+            }
+        }
+    }
+//}
+
+
+
+
+// mohamed sherif mohamed 20230340
+//{
+    // Function to perform Affine Cipher encryption
+    string AffineCipher(int num_a, int num_b, int num_c, string sentence)
+    {
+        int chk, index;
+        string cipher = "";
+        string cs = "";
+        string cs_upper = "";
+        string arr = "abcdefghijklmnopqrstuvwxyz";
+        int f_x;
+
+        // Convert the sentence to lowercase
+        for (int i = 0; i < sentence.size(); i++)
+        {
+            cs += tolower(sentence[i]);
+        }
+
+        // Encrypt each character in the sentence
+        for (int i = 0; i < cs.size(); i++)
+        {
+            index = arr.find(cs[i]);
+            if (index == -1)
+            {
+                cipher += cs[i]; // Append non-alphabetic characters as is
+            }
+            else if (index != -1)
+            {
+                f_x = ((num_a * index) + num_b) % 26; // Apply Affine Cipher formula
+                cipher += arr[f_x]; // Append the encrypted character
+            }
+        }
+
+        // Convert the encrypted text to uppercase
+        for (int i = 0; i < sentence.size(); i++)
+        {
+            cs_upper += toupper(cipher[i]);
+        }
+
+        // Return the encrypted text in uppercase
+        return cs_upper;
+    }
+
+    // Function to perform Affine Cipher decryption
+    string AffineDecipher(int num_a, int num_b, int num_c, string sentence)
+    {
+        int chk, index_2;
+        string cipher_2 = "";
+        string cs = "";
+        string arr = "abcdefghijklmnopqrstuvwxyz";
+        int y_x;
+
+        // Convert the sentence to lowercase
+        for (int i = 0; i < sentence.size(); i++)
+        {
+            cs += tolower(sentence[i]);
+        }
+
+        // Decrypt each character in the sentence
+        for (int i = 0; i < cs.size(); i++)
+        {
+            index_2 = arr.find(cs[i]);
+            if (index_2 == -1)
+            {
+                cipher_2 += cs[i]; // Append non-alphabetic characters as is
+            }
+            else
+            {
+                chk = num_c * (index_2 - num_b) % 26; // Apply Affine Cipher decryption formula
+                if (chk < 0)
+                {
+                    y_x = 26 + chk; // Adjust negative values to positive modulo 26
+                }
+                else
+                {
+                    y_x = chk;
+                }
+                cipher_2 += arr[y_x]; // Append the decrypted character
+            }
+        }
+        return cipher_2; 
+    }
+//}
+
+// mohamed mahmoud abdelbaset 20230354
+//{
+    // Function to perform Baconian Cipher encryption
+    string BaconianCipher(string encodedtext)
+    {
+        // Define a map to store Baconian Cipher representations for each character
+        map<char, string> baconianMap = {
+            {'A', "aaaaa"}, {'B', "aaaab"}, {'C', "aaaba"}, {'D', "aaabb"}, {'E', "aabaa"},
+            {'F', "aabab"}, {'G', "aabba"}, {'H', "aabbb"}, {'I', "abaaa"}, {'J', "abaab"},
+            {'K', "ababa"}, {'L', "ababb"}, {'M', "abbaa"}, {'N', "abbab"}, {'O', "abbba"},
+            {'P', "abbbb"}, {'Q', "baaaa"}, {'R', "baaab"}, {'S', "baaba"}, {'T', "baabb"},
+            {'U', "babaa"}, {'V', "babab"}, {'W', "babba"}, {'X', "babbb"}, {'Y', "bbaaa"},
+            {'Z', "bbaab"}
+        };
+
+        string encrypted;
+        // Encrypt each character in the encoded text
+        for (char character : encodedtext) {
+            if (isalpha(character)) { // Check if the character is alphabetic
+                encrypted += baconianMap[character]; // Append the Baconian Cipher representation of the character
+            }
+        }
+        return encrypted;
+    }
+
+    // Function to decipher Baconian cipher given a ciphertext
+    void BaconianDecipher(string ciphertext)
+    {
+        // Map to store Baconian cipher mappings
+        map<char, string> baconianMap = {
+            {'A', "aaaaa"}, {'B', "aaaab"}, {'C', "aaaba"}, {'D', "aaabb"}, {'E', "aabaa"},
+            {'F', "aabab"}, {'G', "aabba"}, {'H', "aabbb"}, {'I', "abaaa"}, {'J', "abaab"},
+            {'K', "ababa"}, {'L', "ababb"}, {'M', "abbaa"}, {'N', "abbab"}, {'O', "abbba"},
+            {'P', "abbbb"}, {'Q', "baaaa"}, {'R', "baaab"}, {'S', "baaba"}, {'T', "baabb"},
+            {'U', "babaa"}, {'V', "babab"}, {'W', "babba"}, {'X', "babbb"}, {'Y', "bbaaa"},
+            {'Z', "bbaab"}
+        };
+
+        string decrypted; // Variable to store the decrypted text
+        string temp; // Temporary string to accumulate characters from the ciphertext
+
+        // Check if the ciphertext length is valid for Baconian cipher
+        if (ciphertext.size() >= 5) {
+            // Iterate through each character in the ciphertext
+            for (char character : ciphertext) {
+                character = tolower(character); // Convert character to lowercase
+                // Check if the character is 'a' or 'b' (valid Baconian cipher character)
+                if (character == 'a' || character == 'b') {
+                    temp += character; // Add character to temporary string
+                    // Check if the temporary string length reaches 5 (one Baconian cipher character)
+                    if (temp.length() == 5) {
+                        // Iterate through the Baconian map to find matching pattern
+                        for (const auto& pair : baconianMap) {
+                            // If the pattern matches, add corresponding character to decrypted text
+                            if (pair.second == temp) {
+                                decrypted += pair.first;
+                                temp.clear(); // Clear temporary string for next pattern
+                                break; // Exit loop after finding a match
+                            }
+                        }
+                    }
+                }
+            }
+            // Print the decrypted text
+            cout << "Decrypted text is : " << decrypted << endl;
+        }
+        else {
+            // If the ciphertext length is less than 5, it's invalid for Baconian cipher
+            cout << "Invalid ciphertext.\n";
+        }
+    }
+//}
+
+// emil ehab mosaad 20230067
+//{
+    // Function to encrypt the text using Morse code
+    string MorseCodeCipher(string text)
+    {
+        // Define a map to store Morse code representations for each character
+        map <char, string> MorseCode;
+        // Assign Morse code representations for each character
+        MorseCode['A'] = ".-"; MorseCode['B'] = "-..."; MorseCode['C'] = "-.-."; MorseCode['D'] = "-.."; MorseCode['E'] = "."; MorseCode['F'] = "..-.";
+        MorseCode['G'] = "--."; MorseCode['H'] = "...."; MorseCode['I'] = ".."; MorseCode['J'] = ".---"; MorseCode['K'] = "-.-"; MorseCode['L'] = ".-..";
+        MorseCode['M'] = "--"; MorseCode['N'] = "-."; MorseCode['O'] = "---"; MorseCode['P'] = ".--."; MorseCode['Q'] = "--.-"; MorseCode['R'] = ".-.";
+        MorseCode['S'] = "..."; MorseCode['T'] = "-"; MorseCode['U'] = "..-"; MorseCode['V'] = "...-"; MorseCode['W'] = ".--"; MorseCode['X'] = "-..-";
+        MorseCode['Y'] = "-.--"; MorseCode['Z'] = "--.."; MorseCode['1'] = ".----"; MorseCode['2'] = "..---"; MorseCode['3'] = "...--"; MorseCode['4'] = "....-";
+        MorseCode['5'] = "....."; MorseCode['6'] = "-...."; MorseCode['7'] = "--..."; MorseCode['8'] = "---.."; MorseCode['9'] = "----."; MorseCode['0'] = "-----";
+        MorseCode['?'] = "..--.."; MorseCode['!'] = "-.-.--"; MorseCode['.'] = ".-.-.-"; MorseCode[','] = "--..--"; MorseCode[';'] = "-.-.-."; MorseCode[':'] = "---...";
+        MorseCode['+'] = ".-.-."; MorseCode['-'] = "-....-"; MorseCode['/'] = "-..-."; MorseCode['='] = "-...-";
+
+        string EncryptedText;
+        // Convert each character of the text to its Morse code representation
+        for (char& c : text)
+        {
+            // If the character is a space, add three spaces to represent a word gap
+            if (c == ' ')
+            {
+                EncryptedText += "   ";
+                continue;
+            }
+            // Append Morse code for the character and a space to separate characters
+            EncryptedText += MorseCode[c];
+            EncryptedText += ' ';
+        }
+
+        return EncryptedText;
+    }
+
+    // Function to decrypt the text from Morse code
+    string MorseCodeDecipher(string EncryptedText)
+    {
+        string temp, DecryptedText;
+        // Define a map to store Morse code representations for each character
+        map <char, string> MorseCode;
+        // Assign Morse code representations for each character
+        MorseCode['A'] = ".-"; MorseCode['B'] = "-..."; MorseCode['C'] = "-.-."; MorseCode['D'] = "-.."; MorseCode['E'] = "."; MorseCode['F'] = "..-.";
+        MorseCode['G'] = "--."; MorseCode['H'] = "...."; MorseCode['I'] = ".."; MorseCode['J'] = ".---"; MorseCode['K'] = "-.-"; MorseCode['L'] = ".-..";
+        MorseCode['M'] = "--"; MorseCode['N'] = "-."; MorseCode['O'] = "---"; MorseCode['P'] = ".--."; MorseCode['Q'] = "--.-"; MorseCode['R'] = ".-.";
+        MorseCode['S'] = "..."; MorseCode['T'] = "-"; MorseCode['U'] = "..-"; MorseCode['V'] = "...-"; MorseCode['W'] = ".--"; MorseCode['X'] = "-..-";
+        MorseCode['Y'] = "-.--"; MorseCode['Z'] = "--.."; MorseCode['1'] = ".----"; MorseCode['2'] = "..---"; MorseCode['3'] = "...--"; MorseCode['4'] = "....-";
+        MorseCode['5'] = "....."; MorseCode['6'] = "-...."; MorseCode['7'] = "--..."; MorseCode['8'] = "---.."; MorseCode['9'] = "----."; MorseCode['0'] = "-----";
+        MorseCode['?'] = "..--.."; MorseCode['!'] = "-.-.--"; MorseCode['.'] = ".-.-.-"; MorseCode[','] = "--..--"; MorseCode[';'] = "-.-.-."; MorseCode[':'] = "---...";
+        MorseCode['+'] = ".-.-."; MorseCode['-'] = "-....-"; MorseCode['/'] = "-..-."; MorseCode['='] = "-...-";
+
+        // Iterate through the encrypted text to decrypt Morse code
+        for (int i = 0; i < EncryptedText.size(); ++i)
+        {
+            // If a space is encountered, find the corresponding character for the Morse code sequence stored in temp
+            if (EncryptedText[i] == ' ')
+            {
+                for (const auto& pair : MorseCode)
+                {
+                    if (pair.second == temp)
+                    {
+                        DecryptedText += pair.first;
+                        temp = "";
+                    }
+                }
+                // If the next character is also a space, add a space to the decrypted text
+                if (EncryptedText[i + 1] == ' ')
+                {
+                    if (DecryptedText[DecryptedText.size() - 1] == ' ')
+                    {
+                        continue;
+                    }
+                    DecryptedText += " ";
+                }
+                continue;
+            }
+
+            temp += EncryptedText[i];
+
+            if (i == EncryptedText.size() - 1)
+            {
+                for (const auto& pair : MorseCode)
+                {
+                    if (pair.second == temp)
+                    {
+                        DecryptedText += pair.first;
+                        temp = "";
+                    }
+                }
+            }
+        }
+        return DecryptedText;
+    }
+//}
+
+
