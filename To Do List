@@ -1,0 +1,506 @@
+import java.time.LocalDate;
+import java.time.format.DateTimeFormatter;
+import java.util.List;
+import java.util.Scanner;
+import java.util.ArrayList;
+import java.io.*;
+public class Main {
+
+    public static class Validator {
+        static Scanner scanner = new Scanner(System.in);
+
+        public static int validChoice(int first, int last) {
+            System.out.println("Enter a number between " + first + " and " + last + ": ");
+            System.out.print("Enter your choice: ");
+
+            int choice = validNumber();
+
+            while (choice < first || choice > last) {
+                System.out.print("Invalid choice! Enter a number between " + first + " and " + last + ": ");
+                choice = validNumber();
+            }
+
+            return choice;
+        }
+
+        private static int validNumber() {
+            while (!scanner.hasNextInt()) {
+                System.out.print("Invalid input! Enter a valid number: ");
+                scanner.next(); // Consume invalid input
+            }
+            int num = scanner.nextInt();
+            scanner.nextLine();
+            return num;
+        }
+    }
+
+    public static class Task {
+        private String name;
+        private static int taskCounter = 0;
+        private final int taskId;
+        private String description;
+        private LocalDate additionDate;
+        private LocalDate deadlineDate;
+        private String status; // Can be "Binding", "Working on", "Achieved"
+        private boolean isStarted;
+        private String kind;
+
+        // Constructor
+        public Task() {
+            taskCounter++;
+            this.taskId = taskCounter;
+            this.additionDate = LocalDate.now();
+            makeTask();
+        }
+
+        public Task(int taskId, String name, String description, LocalDate additionDate,
+                    LocalDate deadlineDate, String status, boolean isStarted, String kind) {
+            this.taskId = taskId;
+            this.name = name;
+            this.description = description;
+            this.additionDate = additionDate;
+            this.deadlineDate = deadlineDate;
+            this.status = status;
+            this.isStarted = isStarted;
+            this.kind = kind;
+        }
+
+        // Getters
+        public String getName() {
+            return name;
+        }
+
+        public int getTaskId() {
+            return taskId;
+        }
+
+        public String getDescription() {
+            return description;
+        }
+
+        public LocalDate getAdditionDate() {
+            return additionDate;
+        }
+
+        public LocalDate getDeadlineDate() {
+            return deadlineDate;
+        }
+
+        public String getStatus() {
+            return status;
+        }
+
+        public boolean isStarted() {
+            return isStarted;
+        }
+
+        public String getKind() {
+            return kind;
+        }
+
+        // Setters
+        public void setName() {
+            System.out.print("Enter a name for the task: ");
+            this.name = Validator.scanner.nextLine();
+        }
+
+        public void setDescription() {
+            System.out.print("Enter the description of the task: ");
+            this.description = Validator.scanner.nextLine();
+        }
+
+        public void setDeadlineDate() {
+            while (true) {
+                System.out.print("Enter the deadline of the task (yyyy-MM-dd): ");
+                String dateInput = Validator.scanner.nextLine();
+                try {
+                    this.deadlineDate = LocalDate.parse(dateInput, DateTimeFormatter.ofPattern("yyyy-MM-dd"));
+                    break; // Exit loop if successful
+                } catch (Exception e) {
+                    System.out.println("Invalid date format! Try again.");
+                }
+            }
+        }
+
+        public void setStatus() {
+            System.out.println("Please choose one of the next status: ");
+            System.out.println("[1]- Working on");
+            System.out.println("[2]- Binding");
+            System.out.println("[3]- Achieved");
+            int choice = Validator.validChoice(1, 3);
+            switch (choice) {
+                case 1 -> this.status = "Working on";
+                case 2 -> this.status = "Binding";
+                case 3 -> this.status = "Achieved";
+            }
+        }
+
+        public void setStarted() {
+            System.out.println("Is this task important?");
+            System.out.println("[1]- Yes");
+            System.out.println("[2]- No");
+            int choice = Validator.validChoice(1, 2);
+            this.isStarted = choice == 1;
+        }
+
+        public void setKind() {
+            System.out.println("Choose the kind of the task:");
+            System.out.println("[1]- Daily");
+            System.out.println("[2]- Normal task");
+            int choice = Validator.validChoice(1, 2);
+            this.kind = (choice == 1) ? "Daily" : "Normal";
+            if(choice == 1){
+                this.status = "Working on";
+            }else{
+                System.out.println("-------------------------------------------------------------");
+                setStatus();
+            }
+        }
+
+        public void markAsAchieved(){
+            status = "Achieved";
+        }
+
+        public void makeTask() {
+            System.out.println("-------------------------------------------------------------");
+            setName();
+            System.out.println("-------------------------------------------------------------");
+            setDescription();
+            System.out.println("-------------------------------------------------------------");
+            setDeadlineDate();
+            System.out.println("-------------------------------------------------------------");
+            setKind();
+            System.out.println("-------------------------------------------------------------");
+            setStarted();
+            System.out.println("-------------------------------------------------------------");
+        }
+
+        public void editTask() {
+            boolean editing = true;
+
+            while (editing) {
+                System.out.println("Choose what to edit in the task:");
+                System.out.println("[1]- Name");
+                System.out.println("[2]- Description");
+                System.out.println("[3]- Deadline Date");
+                System.out.println("[4]- Kind");
+                System.out.println("[5]- Important");
+                System.out.println("[6]- Status");
+                System.out.println("[7]- Edit all details");
+                System.out.println("[8]- Exit");
+
+                int choice = Validator.validChoice(1, 8);
+                System.out.println("-------------------------------------------------------------");
+                switch (choice) {
+                    case 1 -> setName();
+                    case 2 -> setDescription();
+                    case 3 -> setDeadlineDate();
+                    case 4 -> setKind();
+                    case 5 -> setStarted();
+                    case 6 -> setStatus();
+                    case 7 -> makeTask();
+                    case 8 -> {
+                        System.out.println("Exiting edit mode...");
+                        editing = false;
+                    }
+                }
+            }
+        }
+
+
+        // Method to display only name, deadline, and status
+        public void showBasicInfo() {
+
+            String formattedName = String.format("%-20.20s", name); // Trim or pad name to 15 chars
+            String formattedDeadline = (deadlineDate != null) ? String.format("%-10.10s", deadlineDate.toString()) : "Not Set   "; // Trim or pad deadline to 10 chars
+            String formattedStatus = status;
+            System.out.println(formattedName + " | " + formattedDeadline + " | " + formattedStatus);
+
+            System.out.println("-------------------------------------------------------------");
+        }
+
+        // Method to display all details
+        public void showAllDetails() {
+            System.out.println("Task ID: " + getTaskId());
+            System.out.println("Name: " + getName());
+            System.out.println("Description: " + getDescription());
+            System.out.println("Addition Date: " + getAdditionDate());
+            System.out.println("Deadline: " + (getDeadlineDate() != null ? getDeadlineDate() : "Not Set"));
+            System.out.println("Status: " + getStatus());
+            System.out.println("Started: " + (isStarted() ? "Yes" : "No"));
+            System.out.println("Kind: " + getKind());
+            System.out.println("-------------------------------------------------------------");
+        }
+    }
+
+    public static class ToDoList {
+        private final List<Task> tasks;
+        private final String fileName = "tasksTxtFile";
+
+        public ToDoList() {
+            this.tasks = new ArrayList<>();
+            loadTasksFromFile(fileName);
+        }
+
+        public void saveTasksToFile(String filename) {
+            try (BufferedWriter writer = new BufferedWriter(new FileWriter(filename))) {
+                for (Task task : tasks) {
+                    writer.write(task.getTaskId() + "," +
+                            task.getName() + "," +
+                            task.getDescription() + "," +
+                            task.getAdditionDate() + "," +
+                            task.getDeadlineDate() + "," +
+                            task.getStatus() + "," +
+                            task.isStarted() + "," +
+                            task.getKind());
+                    writer.newLine();
+                }
+                System.out.println("Tasks saved successfully.");
+            } catch (IOException e) {
+                System.out.println("Error saving tasks to file: " + e.getMessage());
+            }
+        }
+
+        public void loadTasksFromFile(String filename) {
+            tasks.clear();
+            try (BufferedReader reader = new BufferedReader(new FileReader(filename))) {
+                String line;
+                while ((line = reader.readLine()) != null) {
+                    String[] data = line.split(",");
+                    if (data.length == 8) {
+                        int id = Integer.parseInt(data[0]);
+                        LocalDate addDate = LocalDate.parse(data[3]);
+                        LocalDate dueDate = data[4].equals("null") ? null : LocalDate.parse(data[4]);
+                        boolean started = Boolean.parseBoolean(data[6]);
+
+                        Task task = new Task(id, data[1], data[2], addDate, dueDate, data[5], started, data[7]);
+                        tasks.add(task);
+                    }
+                }
+                System.out.println("Tasks loaded successfully.");
+            } catch (IOException e) {
+                System.out.println("Error loading tasks from file: " + e.getMessage());
+            }
+        }
+
+        public void addTask() {
+            Task task = new Task();
+            tasks.add(task);
+            saveTasksToFile(fileName);
+            System.out.println("Task added successfully.");
+        }
+
+        public void viewAllTasks(boolean inDetails) {
+            if (tasks.isEmpty()) {
+                System.out.println("No tasks available.");
+                return;
+            }
+            int i = 1;
+            System.out.println("-------------------------------------------------------------");
+            for (Task task : tasks) {
+                System.out.println("[" + i + "]- ");
+                if(inDetails){
+                    task.showAllDetails();
+                } else {
+                    task.showBasicInfo();
+                }
+                i++;
+            }
+        }
+
+        public void viewImportantTasks(boolean inDetails) {
+            boolean found = false;
+            int i = 1;
+            System.out.println("-------------------------------------------------------------");
+            for (Task task : tasks) {
+                System.out.println("[" + i + "]- ");
+                if (task.isStarted()) {
+                    if(inDetails){
+                        task.showAllDetails();
+                    } else {
+                        task.showBasicInfo();
+                    }
+                    found = true;
+                }
+            }
+            if (!found) {
+                System.out.println("No important tasks found.");
+            }
+        }
+
+        public void viewDailyTasks(boolean inDetails) {
+            boolean found = false;
+            int i = 1;
+            System.out.println("-------------------------------------------------------------");
+            for (Task task : tasks) {
+                if ("Daily".equals(task.getKind())) {
+                    if(inDetails){
+                        task.showAllDetails();
+                    } else {
+                        task.showBasicInfo();
+                    }
+                    found = true;
+                }
+            }
+            if (!found) {
+                System.out.println("No daily tasks found.");
+            }
+        }
+
+        public void viewAchievedTasks(boolean inDetails) {
+            boolean found = false;
+            int i = 1;
+            System.out.println("-------------------------------------------------------------");
+            for (Task task : tasks) {
+                if ("Achieved".equals(task.getStatus())) {
+                    if(inDetails){
+                        task.showAllDetails();
+                    } else {
+                        task.showBasicInfo();
+                    }
+                    found = true;
+                }
+            }
+            if (!found) {
+                System.out.println("No achieved tasks found.");
+            }
+        }
+
+        public boolean editTask(int index) {
+            if (index < 0 || index >= tasks.size()) {
+                System.out.println("Invalid index! Please enter a valid index.");
+                return false;
+            }
+            tasks.get(index).editTask();
+            saveTasksToFile(fileName);
+            System.out.println("Task updated successfully.");
+            return true;
+        }
+
+        public boolean markTaskAsAchieved(int index) {
+            if (index < 0 || index >= tasks.size()) {
+                System.out.println("Invalid index! Please enter a valid index.");
+                return false;
+            }
+            tasks.get(index).markAsAchieved();
+            saveTasksToFile(fileName);
+            System.out.println("Task status updated.");
+            return true;
+        }
+
+        public boolean deleteTask(int index) {
+            if (index < 0 || index >= tasks.size()) {
+                System.out.println("Invalid index! Please enter a valid index.");
+                return false;
+            }
+            tasks.remove(index);
+            saveTasksToFile(fileName);
+            System.out.println("Task deleted successfully.");
+            return true;
+        }
+
+        public void deleteAllTasks() {
+            tasks.clear();
+            saveTasksToFile(fileName);
+            System.out.println("All tasks deleted.");
+        }
+    }
+
+    public static void menu(ToDoList myToDoList) {
+        boolean running = true;
+
+        while (running) {
+            System.out.println("\n===== TO-DO LIST MENU =====");
+            System.out.println("[1] Show tasks");
+            System.out.println("[2] Exit");
+            int choice = Validator.validChoice(1, 2);
+
+            if (choice == 2) {
+                System.out.println("Exiting program... Goodbye!");
+                running = false;
+                break;
+            }
+
+            boolean taskMenu = true;
+            while (taskMenu) {
+                System.out.println("\n=====     TASK     =====");
+                myToDoList.viewAllTasks(false);
+
+                System.out.println("\n===== TASK OPTIONS =====");
+                System.out.println("[1] View a task");
+                System.out.println("[2] Add a new task");
+                System.out.println("[3] Edit a task");
+                System.out.println("[4] Delete a task");
+                System.out.println("[5] Mark a task as achieved");
+                System.out.println("[6] View all tasks");
+                System.out.println("[7] View important tasks");
+                System.out.println("[8] View daily tasks");
+                System.out.println("[9] View achieved tasks");
+                System.out.println("[10] Delete all tasks");
+                System.out.println("[11] Back to main menu");
+
+                int taskChoice = Validator.validChoice(1, 11);
+
+                switch (taskChoice) {
+                    case 1 -> { // View a task
+                        System.out.print("Enter the task number to view: ");
+                        int index = Validator.validChoice(1, myToDoList.tasks.size()) - 1;
+
+                        System.out.println("Show details? [1] Yes | [2] No");
+                        boolean inDetails = Validator.validChoice(1, 2) == 1;
+                        if (inDetails) {
+                            myToDoList.tasks.get(index).showAllDetails();
+                        } else {
+                            myToDoList.tasks.get(index).showBasicInfo();
+                        }
+                    }
+                    case 2 -> myToDoList.addTask();
+                    case 3 -> { // Edit task
+                        System.out.print("Enter task number to edit: ");
+                        int index = Validator.validChoice(1, myToDoList.tasks.size()) - 1;
+                        myToDoList.editTask(index);
+                    }
+                    case 4 -> { // Delete task
+                        System.out.print("Enter task number to delete: ");
+                        int index = Validator.validChoice(1, myToDoList.tasks.size()) - 1;
+                        myToDoList.deleteTask(index);
+                    }
+                    case 5 -> { // Mark as achieved
+                        System.out.print("Enter task number to mark as achieved: ");
+                        int index = Validator.validChoice(1, myToDoList.tasks.size()) - 1;
+                        myToDoList.markTaskAsAchieved(index);
+                    }
+
+                    case 6 -> { // View important tasks
+                        System.out.println("Show details? [1] Yes | [2] No");
+                        boolean inDetails = Validator.validChoice(1, 2) == 1;
+                        myToDoList.viewAllTasks(inDetails);
+                    }
+
+                    case 7 -> { // View important tasks
+                        System.out.println("Show details? [1] Yes | [2] No");
+                        boolean inDetails = Validator.validChoice(1, 2) == 1;
+                        myToDoList.viewImportantTasks(inDetails);
+                    }
+                    case 8 -> { // View daily tasks
+                        System.out.println("Show details? [1] Yes | [2] No");
+                        boolean inDetails = Validator.validChoice(1, 2) == 1;
+                        myToDoList.viewDailyTasks(inDetails);
+                    }
+                    case 9 -> { // View achieved tasks
+                        System.out.println("Show details? [1] Yes | [2] No");
+                        boolean inDetails = Validator.validChoice(1, 2) == 1;
+                        myToDoList.viewAchievedTasks(inDetails);
+                    }
+                    case 10 -> myToDoList.deleteAllTasks();
+                    case 11 -> taskMenu = false;
+                }
+            }
+        }
+    }
+
+    public static void main(String[] args) {
+        ToDoList myToDoList = new ToDoList();
+        menu(myToDoList);
+    }
+}
